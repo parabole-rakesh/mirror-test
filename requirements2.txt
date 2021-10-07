@@ -1,0 +1,4 @@
+pyclustering==0.10.0.1
+pytorch-fast-elmo==0.6.12
+pytorch-stateful-lstm==1.6.0
+murmurhash==0.28.0
