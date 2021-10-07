@@ -1,0 +1,31 @@
+name: Linux Container Node Workflow
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/docker-login@v1
+      with:
+        login-server: index.docker.io
+        username: ${{ secrets.DOCKERIO_USERNAME }}
+        password: ${{ secrets.DOCKERIO_PASSWORD }}
+    - run: |
+        docker login -u parabole -p Parabole@123
+        docker build . -t parabole/document-metadata-extractor:latest
+        docker push parabole/document-metadata-extractor:latest
+    - name: 'Deploy to Azure Container Instances'
+      uses: 'azure/aci-deploy@v1'
+      with:
+        resource-group: document-metadata-extractor-container_instance
+        dns-name-label: document-metadata-extractor
+        image: parabole/document-metadata-extractor:latest
+        registry-login-server: index.docker.io
+        registry-username: ${{ secrets.DOCKERIO_USERNAME }}
+        registry-password: ${{ secrets.DOCKERIO_PASSWORD }}
+        name: aci-sampleapp
+        location: 'east us'
+
